@@ -1,4 +1,4 @@
-# Devcon tool and official setup
+# Binary tools and official setup
 *.exe
 *.ini
 *.dll
@@ -8,15 +8,27 @@
 *.bin
 *.inx
 *.isn
+
+# Binary configuration files
+AdvancedRun.cfg
+
 # Driver folders
 *.inf
 *.cat
 *.DAT
 *.sys
+
 # Realtek Audio Control offline bundle
-/*RtkUWP*/
+*.Appx
+*.AppxBundle
+*.EAppxBundle
+*.BlockMap
+*.provxml
+*.xml
+
 # BSOD / GSOD recovery tutorial and patches
 *.txt
+
 # Temporary files
 tmpFile
 tmpFile2

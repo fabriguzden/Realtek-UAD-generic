@@ -35,8 +35,14 @@
 
 @rem Replace old driver
 @CMD /C EXIT 0
-@where /q devcon
+@where /q devcon.exe
 @if NOT "%ERRORLEVEL%"=="0" echo Windows Device console - devcon.exe is required.&pause&exit
+@CMD /C EXIT 0
+@where /q nircmd.exe
+@if NOT "%ERRORLEVEL%"=="0" echo NirSoft CMD is required.&pause&exit
+@CMD /C EXIT 0
+@where /q nircmdc.exe
+@if NOT "%ERRORLEVEL%"=="0" echo NirSoft CMD is required.&pause&exit
 @echo Stopping Windows Audio service to reduce reboot likelihood...
 @echo.
 @net stop Audiosrv /y
@@ -48,11 +54,13 @@
 @devcon /r disable =MEDIA "HDAUDIO\FUNC_01&VEN_10EC*" "INTELAUDIO\FUNC_01&VEN_10EC*"
 @echo.
 @echo Copying files...
-@echo.
-@copy /y Win64\Realtek\UpdatedCodec\RTKVHD64.sys "%windir%\System32\drivers"
-@copy /y Win64\Realtek\UpdatedCodec\RTAIODAT.DAT "%windir%\System32\drivers"
-@echo.
-@echo Done.
+@set advrunworkdir=%~dp0
+@IF %advrunworkdir:~0,1%%advrunworkdir:~-1%=="" set advrunworkdir=%advrunworkdir:~1,-1%
+@IF "%advrunworkdir:~-1%"=="\" set advrunworkdir=%advrunworkdir:~0,-1%
+@set advrunworkdir=%advrunworkdir:~0,-13%
+@rem AdvancedRun.exe /WaitProcess 1 /EXEFilename "%windir%\System32\cmd.exe" /CommandLine "/C forceupdater\defeatpnplock.cmd" /StartDirectory "%advrunworkdir%" /RunAs 4
+@nircmd.exe elevatecmd runassystem %windir%\System32\cmd.exe /c "%advrunworkdir%\forceupdater\defeatpnplock.cmd"
+@pause
 @echo.
 @IF EXIST patches\*.* echo Applying registry patch...
 @IF EXIST patches\*.* echo.
