@@ -31,20 +31,13 @@
 @echo.
 @pause
 @echo.
-@IF NOT EXIST assets md assets
+@IF NOT EXIST "assets\" md assets
 
 @echo Enabling Windows script host...
 @CMD /C EXIT 0
 @REG QUERY "HKLM\SOFTWARE\Microsoft\Windows Script Host\Settings" /v "Enabled" /t REG_DWORD >nul 2>&1
 @IF "%ERRORLEVEL%"=="0" REG DELETE "HKLM\SOFTWARE\Microsoft\Windows Script Host\Settings" /v "Enabled" /f
 @echo.
-
-@rem Prompt to skip to force updater
-@IF EXIST forceupdater\forceupdater.cmd IF EXIST Win64\Realtek\UpdatedCodec IF "%SAFEBOOT_OPTION%"=="" set /p forceupdateonly=For advanced users: Do you want to manage yourself, updates of codec, extension and software components (HSA, APO, Service) - y/n, default=n:
-@IF EXIST forceupdater\forceupdater.cmd IF EXIST Win64\Realtek\UpdatedCodec IF "%SAFEBOOT_OPTION%"=="" echo.
-@IF /I "%forceupdateonly%"=="y" call forceupdater\forceupdater.cmd
-@IF /I "%forceupdateonly%"=="y" GOTO ending
-@IF /I NOT "%forceupdateonly%"=="y" cls
 
 @echo Creating setup autostart entry...
 @call modules\autostart.cmd setup
@@ -68,6 +61,12 @@
 @CMD /C EXIT 0
 @where /q devcon
 @if NOT "%ERRORLEVEL%"=="0" echo Windows Device console - devcon.exe is required.&echo.&pause&GOTO ending
+@IF "%SAFEBOOT_OPTION%"=="" (
+@devcon /r disable =AudioProcessingObject "SWC\VEN_10EC&AID_0001"
+@echo.
+)
+@devcon /r remove =AudioProcessingObject "SWC\VEN_10EC&AID_0001"
+@echo.
 @IF "%SAFEBOOT_OPTION%"=="" (
 @devcon /r disable =SoftwareComponent "SWC\VEN_10EC&AID_0001"
 @echo.
